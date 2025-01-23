@@ -4,11 +4,12 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './app/layout/App';
+import { RouterProvider } from 'react-router-dom';
 import './app/layout/styles.css';
+import { router } from './app/routes/Routes';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
-)
+    <RouterProvider router={router} future={{ v7_startTransition: true }} />
+  </StrictMode>
+);
