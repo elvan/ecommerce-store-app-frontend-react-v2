@@ -6,6 +6,7 @@ import BasketPage from '../../features/basket/BasketPage';
 import Catalog from '../../features/catalog/Catalog';
 import ProductDetails from '../../features/catalog/ProductDetails';
 import CheckoutPage from '../../features/checkout/CheckoutPage';
+import CheckoutSuccess from '../../features/checkout/CheckoutSuccess';
 import ContactPage from '../../features/contact/ContactPage';
 import HomePage from '../../features/home/HomePage';
 import NotFound from '../errors/NotFound';
@@ -19,7 +20,13 @@ export const router = createBrowserRouter(
       path: '/',
       element: <App />,
       children: [
-        { element: <RequireAuth />, children: [{ path: 'checkout', element: <CheckoutPage /> }] },
+        {
+          element: <RequireAuth />,
+          children: [
+            { path: 'checkout', element: <CheckoutPage /> },
+            { path: 'checkout/success', element: <CheckoutSuccess /> },
+          ],
+        },
         { path: '', element: <HomePage /> },
         { path: 'catalog', element: <Catalog /> },
         { path: 'catalog/:id', element: <ProductDetails /> },
