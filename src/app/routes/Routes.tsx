@@ -9,6 +9,8 @@ import CheckoutPage from '../../features/checkout/CheckoutPage';
 import CheckoutSuccess from '../../features/checkout/CheckoutSuccess';
 import ContactPage from '../../features/contact/ContactPage';
 import HomePage from '../../features/home/HomePage';
+import OrderDetailedPage from '../../features/orders/OrderDetailedPage';
+import OrdersPage from '../../features/orders/OrdersPage';
 import NotFound from '../errors/NotFound';
 import ServerError from '../errors/ServerError';
 import App from '../layout/App';
@@ -25,6 +27,8 @@ export const router = createBrowserRouter(
           children: [
             { path: 'checkout', element: <CheckoutPage /> },
             { path: 'checkout/success', element: <CheckoutSuccess /> },
+            { path: 'orders', element: <OrdersPage /> },
+            { path: 'orders/:id', element: <OrderDetailedPage /> },
           ],
         },
         { path: '', element: <HomePage /> },
