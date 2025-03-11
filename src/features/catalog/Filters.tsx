@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Typography } from '@mui/material';
+import { Box, Button, Paper } from '@mui/material';
 import CheckboxButtons from '../../app/shared/components/CheckboxButtons';
 import RadioButtonGroup from '../../app/shared/components/RadioButtonGroup';
 import { useAppDispatch, useAppSelector } from '../../app/store/store';
@@ -12,14 +12,12 @@ const sortOptions = [
 ];
 
 type Props = {
-  data: { brands: string[]; types: string[] };
+  filtersData: { brands: string[]; types: string[] };
 };
 
-export default function Filters({ data }: Props) {
+export default function Filters({ filtersData: data }: Props) {
   const { orderBy, types, brands } = useAppSelector((state) => state.catalog);
   const dispatch = useAppDispatch();
-
-  if (!data?.brands || !data.types) return <Typography>Loading...</Typography>;
 
   return (
     <Box display="flex" flexDirection="column" gap={3}>

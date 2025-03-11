@@ -19,7 +19,6 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Address } from '../../app/models/user';
 import { useBasket } from '../../lib/hooks/useBasket';
 import { currencyFormat } from '../../lib/util';
 import { useFetchAddressQuery, useUpdateUserAddressMutation } from '../account/accountApi';
@@ -32,7 +31,7 @@ export default function CheckoutStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [createOrder] = useCreateOrderMutation();
   const { basket } = useBasket();
-  const { data: { name, ...restAddress } = {} as Address, isLoading } = useFetchAddressQuery();
+  const { data, isLoading } = useFetchAddressQuery();
   const [updateAddress] = useUpdateUserAddressMutation();
   const [saveAddressChecked, setSaveAddressChecked] = useState(false);
   const elements = useElements();
@@ -43,6 +42,11 @@ export default function CheckoutStepper() {
   const { total, clearBasket } = useBasket();
   const navigate = useNavigate();
   const [confirmationToken, setConfirmationToken] = useState<ConfirmationToken | null>(null);
+
+  let name, restAddress;
+  if (data) {
+    ({ name, ...restAddress } = data);
+  }
 
   const handleNext = async () => {
     if (activeStep === 0 && saveAddressChecked && elements) {
@@ -169,7 +173,15 @@ export default function CheckoutStepper() {
           />
         </Box>
         <Box sx={{ display: activeStep === 1 ? 'block' : 'none' }}>
-          <PaymentElement onChange={handlePaymentChange} />
+          <PaymentElement
+            onChange={handlePaymentChange}
+            options={{
+              wallets: {
+                applePay: 'never',
+                googlePay: 'never',
+              },
+            }}
+          />
         </Box>
         <Box sx={{ display: activeStep === 2 ? 'block' : 'none' }}>
           <Review confirmationToken={confirmationToken} />
