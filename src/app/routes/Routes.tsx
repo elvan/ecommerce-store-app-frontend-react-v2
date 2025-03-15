@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import AboutPage from '../../features/about/AboutPage';
 import LoginForm from '../../features/account/LoginForm';
 import RegisterForm from '../../features/account/RegisterForm';
+import InventoryPage from '../../features/admin/InventoryPage';
 import BasketPage from '../../features/basket/BasketPage';
 import Catalog from '../../features/catalog/Catalog';
 import ProductDetails from '../../features/catalog/ProductDetails';
@@ -29,6 +30,7 @@ export const router = createBrowserRouter(
             { path: 'checkout/success', element: <CheckoutSuccess /> },
             { path: 'orders', element: <OrdersPage /> },
             { path: 'orders/:id', element: <OrderDetailedPage /> },
+            { path: 'inventory', element: <InventoryPage /> },
           ],
         },
         { path: '', element: <HomePage /> },
