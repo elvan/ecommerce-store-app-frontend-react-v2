@@ -1,11 +1,26 @@
+import { Delete } from '@mui/icons-material';
+import { LoadingButton } from '@mui/lab';
 import { Box, Button, Divider, Paper, TextField, Typography } from '@mui/material';
+import { FieldValues, useForm } from 'react-hook-form';
 import { Link, useLocation } from 'react-router-dom';
+import { useAddCouponMutation, useRemoveCouponMutation } from '../../../features/basket/basketApi';
 import { useBasket } from '../../../lib/hooks/useBasket';
 import { currencyFormat } from '../../../lib/util';
 
 export default function OrderSummary() {
-  const { subtotal, deliveryFee } = useBasket();
+  const { subtotal, deliveryFee, discount, basket, total } = useBasket();
   const location = useLocation();
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm();
+  const [addCoupon] = useAddCouponMutation();
+  const [removeCoupon, { isLoading }] = useRemoveCouponMutation();
+
+  const onSubmit = async (data: FieldValues) => {
+    await addCoupon(data.code);
+  };
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" maxWidth="lg" mx="auto">
@@ -23,10 +38,7 @@ export default function OrderSummary() {
           </Box>
           <Box display="flex" justifyContent="space-between" mb={1}>
             <Typography color="textSecondary">Discount</Typography>
-            <Typography color="success">
-              {/* TODO */}
-              -$0.00
-            </Typography>
+            <Typography color="success">-{currencyFormat(discount)}</Typography>
           </Box>
           <Box display="flex" justifyContent="space-between" mb={1}>
             <Typography color="textSecondary">Delivery fee</Typography>
@@ -35,7 +47,7 @@ export default function OrderSummary() {
           <Divider sx={{ my: 2 }} />
           <Box display="flex" justifyContent="space-between" mb={1}>
             <Typography color="textSecondary">Total</Typography>
-            <Typography>{currencyFormat(subtotal + deliveryFee)}</Typography>
+            <Typography>{currencyFormat(total)}</Typography>
           </Box>
         </Box>
 
@@ -59,19 +71,46 @@ export default function OrderSummary() {
       </Paper>
 
       {/* Coupon Code Section */}
-      <Paper sx={{ width: '100%', borderRadius: 3, p: 3 }}>
-        <form>
-          <Typography variant="subtitle1" component="label">
-            Do you have a voucher code?
-          </Typography>
+      {location.pathname.includes('checkout') && (
+        <Paper sx={{ width: '100%', borderRadius: 3, p: 3 }}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Typography variant="subtitle1" component="label">
+              Do you have a voucher code?
+            </Typography>
 
-          <TextField label="Voucher code" variant="outlined" fullWidth sx={{ my: 2 }} />
+            {basket?.coupon && (
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Typography fontWeight="bold" variant="body2">
+                  {basket.coupon.name} applied
+                </Typography>
+                <LoadingButton loading={isLoading} onClick={() => removeCoupon()}>
+                  <Delete color="error" />
+                </LoadingButton>
+              </Box>
+            )}
 
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            Apply code
-          </Button>
-        </form>
-      </Paper>
+            <TextField
+              label="Voucher code"
+              variant="outlined"
+              fullWidth
+              disabled={!!basket?.coupon}
+              {...register('code', { required: 'Voucher code missing' })}
+              sx={{ my: 2 }}
+            />
+
+            <LoadingButton
+              loading={isSubmitting}
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={!!basket?.coupon}
+            >
+              Apply code
+            </LoadingButton>
+          </form>
+        </Paper>
+      )}
     </Box>
   );
 }
